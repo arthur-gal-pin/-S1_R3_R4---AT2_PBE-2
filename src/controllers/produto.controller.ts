@@ -5,12 +5,12 @@ import { Produto } from "../models/Produto";
 
 const produtoController = {
     criar: async (req: Request, res: Response) => {
-        let { nomeProduto, preco, idCategoria, valor } = req.body;
+        const  idCategoria : Number = req.body.idCategoria;
+        const valor : Number = req.body.valor;
+        const nomeProduto : string = req.body.nomeProduto;
 
-        nomeProduto = String(nomeProduto);
-        preco = Number(preco);
-        idCategoria = Number(idCategoria);
-        valor = Number(valor);
+        console.log(nomeProduto);
+        console.log(valor);
 
         if (!req.file) {
             return res.status(400).json({
@@ -18,11 +18,17 @@ const produtoController = {
             });
         }
 
-        const caminhoImagem : string = `src/uploads/images/${req.file.filename}`;
-        const produto = Produto.criar({nomeProduto, idCategoria, valor, caminhoImagem})
+        const caminhoImagem: string = `src/uploads/images/${req.file.filename}`;
+        const produto = Produto.criar({
+            nome: String(nomeProduto),
+            idCategoria: Number(idCategoria),
+            valor: Number(valor),
+            vinculoImagem: caminhoImagem // O Factory espera 'vinculoImagem'
+        });
+        console.log(produto.valor);
 
         const result = await produtoRepository.create(produto);
-    
+
 
         return res.status(201).json({
             message: 'Registro inserido com sucesso.',
@@ -51,20 +57,21 @@ const produtoController = {
         try {
             const id: number = Number(Req.params.id);
             const result = await produtoRepository.delete(id);
-            return Res.status(200).json({ result });
+            return Res.status(200).json({"message": "Você excluiu o produto com sucesso.", "data": result} );
+
         } catch (error: any) {
             console.error(error);
             Res.status(500).json({ message: 'Ocorreu um erro no servidor.', error: error.message })
         }
     },
-    selecionar: async (req: Request, res: Response) => {
+    listar: async (req: Request, res: Response) => {
         try {
             const { nome, id } = req.body;
 
-            const result = await produtoRepository.read(nome, undefined);
+            const result = await produtoRepository.read(nome, id);
 
             if (result.length === 0) {
-                const contexto = id ? `com o id ${id}` : (nome ? `com o nome "${nome}"` : 'cadastrada');
+                const contexto = id ? `com o id ${id}` : (nome ? `com o nome "${nome}"` : 'cadastrado');
                 return res.status(200).json({
                     message: `Não há nenhum produto ${contexto} no banco de dados.`
                 });

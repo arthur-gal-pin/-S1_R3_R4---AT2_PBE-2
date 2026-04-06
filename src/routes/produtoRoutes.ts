@@ -4,9 +4,9 @@ import uploadImage from "../middlewares/uploadImage.middleware";
 
 const produtoRoutes = Router();
 
-produtoRoutes.get('/produtos', produtoController.listar);
-produtoRoutes.post('/produtos', uploadImage, produtoController.criar);
-produtoRoutes.put('/produtos', produtoController.atualizar);
-produtoRoutes.delete('/produtos/:id', produtoController.deletar);
+produtoRoutes.get('/', produtoController.listar);
+produtoRoutes.post('/', uploadImage, produtoController.criar);
+produtoRoutes.put('/', produtoController.atualizar);
+produtoRoutes.delete('/:id', produtoController.excluir);
 
 export default produtoRoutes;

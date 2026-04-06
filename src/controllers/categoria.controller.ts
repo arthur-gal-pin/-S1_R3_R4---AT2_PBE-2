@@ -39,7 +39,7 @@ const categoriaController = {
             Res.status(500).json({ message: 'Ocorreu um erro no servidor.', error: error.message })
         }
     },
-    selecionar: async (req: Request, res: Response) => {
+    listar: async (req: Request, res: Response) => {
         try {
             const { nome, id } = req.body;
 
