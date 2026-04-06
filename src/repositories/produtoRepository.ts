@@ -24,13 +24,22 @@ const produtoRepository = {
         }
 
         const [rows] = await connection.execute<RowDataPacket[]>(sql, values);
-        return rows as Produto[];
+
+        return rows.map(row => Produto.editar(
+            row.IdProduto,
+            {
+                nome: row.NomeProduto,
+                idCategoria: row.IdCategoria,
+                valor: Number(row.Valor),
+                vinculoImagem: row.CaminhoImagem
+            }
+        ));
     },
 
     update: async (produto: Produto): Promise<boolean> => {
-        const sql = 'UPDATE produtos SET NomeProduto = ?, IdCategoria = ?, Valor = ? WHERE idProduto = ?';
-        const values = [produto.nome, produto.idCategoria, produto.valor, produto.idCategoria];
-        
+        const sql = 'UPDATE produtos SET NomeProduto = ?, IdCategoria = ?, Valor = ? WHERE IdProduto = ?';
+        const values = [produto.nome, produto.idCategoria, produto.valor, produto.idProduto];
+
         const [result] = await connection.execute<ResultSetHeader>(sql, values);
         return result.affectedRows > 0;
     },
